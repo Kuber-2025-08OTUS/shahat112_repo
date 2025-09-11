@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: homework-controllers
+  labels:
+    name: homework-controllers
+    purpose: controllers-learning

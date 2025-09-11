@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: homework-deployment
+  namespace: homework
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: homework-web
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: homework-web
+    spec:
+      volumes:
+        - name: shared-volume
+          emptyDir: {}
+
+      initContainers:
+        - name: init-container
+          image: busybox
+          command: ['sh', '-c', 'echo "<html><body><h1>Homework Web Server</h1><p>Welcome to homework deployment!</p></body></html>" > /init/index.html']
+          volumeMounts:
+            - name: shared-volume
+              mountPath: /init
+
+      containers:
+        - name: web-server
+          image: nginx:alpine
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: shared-volume
+              mountPath: /usr/share/nginx/html
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - test -f /usr/share/nginx/html/index.html
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 3
+          lifecycle:
+            preStop:
+              exec:
+                command: ["rm", "-f", "/usr/share/nginx/html/index.html"]
