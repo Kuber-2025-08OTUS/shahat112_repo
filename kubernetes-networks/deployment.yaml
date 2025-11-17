@@ -26,23 +26,22 @@ spec:
         - /bin/sh
         - -c
         - |
-          # Создаем директорию и файл для readiness probe
-          mkdir -p /homework
-          echo "<html><body><h1>Homework Application</h1><p>Status: READY</p></body></html>" > /homework/index.html
-          echo "Homework file created successfully at /homework/index.html"
-          # Запускаем nginx в foreground режиме
+          mkdir -p /usr/share/nginx/html/homework
+          echo "<html><body><h1>Homework Application</h1><p>Status: READY</p><p>HTTP Get readiness probe working!</p></body></html>" > /usr/share/nginx/html/homework/index.html
+          echo "Homework file created successfully"
           exec nginx -g "daemon off;"
         readinessProbe:
-          exec:
-            command:
-            - cat
-            - /homework/index.html
-          initialDelaySeconds: 3
+          httpGet:
+            path: /homework/index.html
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 5
           periodSeconds: 5
           timeoutSeconds: 1
+          failureThreshold: 3
         livenessProbe:
           httpGet:
             path: /
             port: 80
-          initialDelaySeconds: 10
-          periodSeconds: 15
+          initialDelaySeconds: 15
+          periodSeconds: 20
