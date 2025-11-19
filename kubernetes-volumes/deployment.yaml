@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: homework-deployment
+  namespace: homework
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: homework-app
+  template:
+    metadata:
+      labels:
+        app: homework-app
+    spec:
+      containers:
+      - name: homework-container
+        image: nginx:1.25
+        ports:
+        - containerPort: 80
+        command:
+        - /bin/sh
+        - -c
+        - |
+          mkdir -p /usr/share/nginx/html/homework
+          echo "<html><body><h1>Homework Application</h1><p>Status: READY</p><p>HTTP Get readiness probe working!</p></body></html>" > /usr/share/nginx/html/homework/index.html
+          echo "Homework file created successfully"
+          exec nginx -g "daemon off;"
+        readinessProbe:
+          httpGet:
+            path: /homework/index.html
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 1
+          failureThreshold: 3
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 15
+          periodSeconds: 20
