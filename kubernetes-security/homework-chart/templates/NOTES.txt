@@ -1,0 +1,29 @@
+{{- if .Values.app.ingress.enabled }}
+Homework Application has been deployed!
+
+You can access your application via:
+  http://{{ .Values.app.ingress.host }}
+
+Available endpoints:
+  - Homepage: http://{{ .Values.app.ingress.host }}/
+  - Homework: http://{{ .Values.app.ingress.host }}/homework/index.html
+  - Config: http://{{ .Values.app.ingress.host }}/conf/info.txt
+
+{{- else }}
+Homework Application has been deployed!
+
+You can access your application via port-forward:
+  kubectl port-forward svc/{{ .Values.app.name }}-service 8080:80 -n {{ .Values.global.namespace }}
+
+Then open: http://localhost:8080
+{{- end }}
+
+{{- if .Values.externalServices.redis.enabled }}
+Redis is configured and available at {{ .Values.externalServices.redis.host }}:{{ .Values.externalServices.redis.port }}
+{{- else }}
+To enable Redis, install it separately and update the externalServices.redis configuration.
+{{- end }}
+
+Release: {{ .Release.Name }}
+Namespace: {{ .Values.global.namespace }}
+Version: {{ .Chart.AppVersion }}

@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "homework-chart.fullname" . }}
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "homework-chart.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.app.replicaCount }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      {{- include "homework-chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "homework-chart.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- if .Values.serviceAccounts.monitoring.enabled }}
+      serviceAccountName: {{ include "homework-chart.fullname" . }}-monitoring
+      {{- end }}
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag }}"
+        imagePullPolicy: {{ .Values.app.image.pullPolicy }}
+        ports:
+        - name: http
+          containerPort: {{ .Values.app.service.targetPort }}
+          protocol: TCP
+        command:
+        - /bin/sh
+        - -c
+        - |
+          mkdir -p /usr/share/nginx/html/homework
+          mkdir -p /usr/share/nginx/html/conf
+          
+          # Copy ConfigMap files
+          cp /homework-conf/* /usr/share/nginx/html/conf/ 2>/dev/null || true
+          
+          # Create index.html
+          echo "<html><body><h1>{{ .Values.app.name }}</h1><p>Status: READY</p><p>Deployed with Helm</p><p>Version: {{ .Chart.AppVersion }}</p><p>Visit: <a href='/conf/info.txt'>Config Files</a></p></body></html>" > /usr/share/nginx/html/homework/index.html
+          
+          echo "Application initialized successfully"
+          exec nginx -g "daemon off;"
+        volumeMounts:
+        - name: homework-pvc
+          mountPath: /homework-data
+        - name: config-volume
+          mountPath: /homework-conf
+        - name: nginx-homework-dir
+          mountPath: /usr/share/nginx/html/homework
+        {{- if .Values.probes.enabled }}
+        readinessProbe:
+          httpGet:
+            path: {{ .Values.probes.readiness.path }}
+            port: {{ .Values.app.service.targetPort }}
+            scheme: HTTP
+          initialDelaySeconds: {{ .Values.probes.readiness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.probes.readiness.periodSeconds }}
+          timeoutSeconds: 1
+          failureThreshold: 3
+        livenessProbe:
+          httpGet:
+            path: {{ .Values.probes.liveness.path }}
+            port: {{ .Values.app.service.targetPort }}
+          initialDelaySeconds: {{ .Values.probes.liveness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.probes.liveness.periodSeconds }}
+        {{- end }}
+      volumes:
+      - name: homework-pvc
+        persistentVolumeClaim:
+          claimName: {{ include "homework-chart.fullname" . }}-pvc
+      - name: config-volume
+        configMap:
+          name: {{ include "homework-chart.fullname" . }}-config
+      - name: nginx-homework-dir
+        emptyDir: {}

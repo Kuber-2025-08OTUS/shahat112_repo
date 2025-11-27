@@ -1,0 +1,57 @@
+# Global settings
+global:
+  namespace: homework
+
+# Application settings
+app:
+  name: homework-app
+  replicaCount: 3
+  image:
+    repository: nginx
+    tag: "1.25"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 80
+  ingress:
+    enabled: true
+    host: homework.otus
+    className: ""
+    annotations: 
+      nginx.ingress.kubernetes.io/rewrite-target: /
+
+# Probes configuration
+probes:
+  enabled: true
+  readiness:
+    path: /homework/index.html
+    initialDelaySeconds: 10
+    periodSeconds: 5
+  liveness:
+    path: /
+    initialDelaySeconds: 15
+    periodSeconds: 20
+
+# Volumes configuration
+volumes:
+  pvc:
+    enabled: true
+    size: 1Gi
+    storageClass: ""
+  configMap:
+    enabled: true
+
+# Service Accounts
+serviceAccounts:
+  monitoring:
+    enabled: true
+  cd:
+    enabled: true
+
+# External services (for future reference)
+externalServices:
+  redis:
+    enabled: true
+    host: "redis-service"
+    port: 6379

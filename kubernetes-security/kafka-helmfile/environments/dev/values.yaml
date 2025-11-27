@@ -1,0 +1,52 @@
+# Development Kafka configuration
+global:
+  kafka:
+    serviceAccount:
+      create: true
+
+# Kafka configuration - use latest version
+# image.tag not specified to use latest
+
+# Cluster configuration  
+replicaCount: 1  # Single broker
+
+# Authentication and security - PLAINTEXT without auth
+auth:
+  clientProtocol: PLAINTEXT
+  interBrokerProtocol: PLAINTEXT
+  saslMechanisms: []
+  
+# Disable SASL authentication
+sasl:
+  enabled: false
+
+# Persistence with smaller size
+persistence:
+  enabled: true
+  size: "2Gi"
+
+# Minimal resources for dev
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "100m"
+  limits:
+    memory: "512Mi"
+    cpu: "300m"
+
+# Disable monitoring in dev
+metrics:
+  kafka:
+    enabled: false
+  jmx:
+    enabled: false
+
+# Network configuration
+service:
+  type: ClusterIP
+  port: 9092
+
+# Development-specific settings
+configurationOverrides:
+  "log.retention.hours": 24
+  "num.partitions": 1
