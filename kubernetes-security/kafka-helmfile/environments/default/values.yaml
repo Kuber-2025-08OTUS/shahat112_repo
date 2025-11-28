@@ -1,0 +1,27 @@
+# Default values for both environments
+global:
+  storageClass: ""
+
+# Common Kafka settings
+externalAccess:
+  enabled: false
+
+# Common persistence settings
+persistence:
+  storageClass: ""
+  accessModes:
+    - ReadWriteOnce
+
+# Common resource settings
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "100m"
+  limits:
+    memory: "512Mi"
+    cpu: "300m"
+
+# Common service settings
+service:
+  type: ClusterIP
+  port: 9092

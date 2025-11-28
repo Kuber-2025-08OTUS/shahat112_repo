@@ -1,0 +1,26 @@
+{{- if .Values.volumes.configMap.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.app.name }}-config
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: {{ .Values.app.name }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+data:
+  app.conf: |
+    # Homework Application Configuration
+    app.name={{ .Values.app.name }}
+    app.version={{ .Chart.AppVersion }}
+    environment=production
+  settings.conf: |
+    # Application Settings
+    server.port={{ .Values.app.service.port }}
+    logging.level=INFO
+    feature.toggle=true
+  info.txt: |
+    This is {{ .Values.app.name }} configuration file.
+    Deployed with Helm chart {{ .Chart.Name }}-{{ .Chart.Version }}
+    Release: {{ .Release.Name }}
+{{- end }}

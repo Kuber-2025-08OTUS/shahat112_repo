@@ -1,0 +1,21 @@
+# Helmfile configuration for Kafka deployments
+repositories:
+  - name: bitnami
+    url: https://charts.bitnami.com/bitnami
+
+releases:
+  # Production Kafka cluster
+  - name: kafka-prod
+    namespace: prod
+    chart: bitnami/kafka
+    version: 23.0.7
+    values:
+      - environments/prod/values.yaml
+
+  # Development Kafka cluster  
+  - name: kafka-dev
+    namespace: dev
+    chart: bitnami/kafka
+    version: 23.0.7
+    values:
+      - environments/dev/values.yaml

@@ -1,0 +1,56 @@
+# Production Kafka configuration
+global:
+  kafka:
+    serviceAccount:
+      create: true
+
+# Kafka configuration
+image:
+  tag: "3.5.2"  # Specific Kafka version
+
+# Cluster configuration
+replicaCount: 5  # 5 brokers
+
+# Authentication and security
+auth:
+  clientProtocol: SASL_PLAINTEXT
+  interBrokerProtocol: SASL_PLAINTEXT
+  saslMechanisms:
+    - "plain"
+  saslInterBrokerMechanism: "plain"
+  
+# Enable SASL authentication
+sasl:
+  enabled: true
+  clientUsers:
+    - "admin"
+  clientPasswords:
+    - "prod-admin-password"
+  interBrokerUser: "admin"
+  interBrokerPassword: "prod-admin-password"
+
+# Persistence
+persistence:
+  enabled: true
+  size: "8Gi"
+
+# Resources
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "300m"
+  limits:
+    memory: "1Gi"
+    cpu: "500m"
+
+# Monitoring
+metrics:
+  kafka:
+    enabled: true
+  jmx:
+    enabled: true
+
+# Network configuration
+service:
+  type: ClusterIP
+  port: 9092
