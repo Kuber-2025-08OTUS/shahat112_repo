@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Nginx - Kubernetes Monitoring</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+        
+        .endpoints {
+            list-style: none;
+        }
+        
+        .endpoints li {
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        
+        .endpoints a {
+            color: #667eea;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        
+        .endpoints a:hover {
+            text-decoration: underline;
+        }
+        
+        .endpoints a::before {
+            content: "🔗";
+            margin-right: 0.5rem;
+        }
+        
+        .metrics-list {
+            list-style: none;
+        }
+        
+        .metrics-list li {
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            padding: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: #10b981;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🚀 Custom Nginx for Kubernetes Monitoring</h1>
+            <p>Custom Docker image with Prometheus metrics endpoint for Kubernetes homework</p>
+        </header>
+        
+        <main class="content">
+            <div class="card">
+                <h2>📊 Available Endpoints</h2>
+                <ul class="endpoints">
+                    <li><a href="/">Main Page</a> <span class="badge">GET</span></li>
+                    <li><a href="/health">Health Check</a> <span class="badge">GET</span></li>
+                    <li><a href="/health.json">Health JSON</a> <span class="badge">GET</span></li>
+                    <li><a href="/metrics">Prometheus Metrics</a> <span class="badge">GET</span></li>
+                    <li><a href="/info">Service Info</a> <span class="badge">GET</span></li>
+                    <li><a href="/nginx_status">Nginx Status</a> <span class="badge">GET</span></li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <h2>📈 Exposed Metrics</h2>
+                <p>This container exposes the following Prometheus metrics:</p>
+                <ul class="metrics-list">
+                    <li>nginx_http_requests_total</li>
+                    <li>nginx_active_connections</li>
+                    <li>nginx_request_duration_seconds</li>
+                    <li>nginx_up</li>
+                </ul>
+                <p style="margin-top: 1rem;">Metrics are updated every 10 seconds and follow Prometheus exposition format.</p>
+            </div>
+            
+            <div class="card">
+                <h2>⚙️ Technical Details</h2>
+                <p><strong>Base Image:</strong> nginx:alpine</p>
+                <p><strong>Port:</strong> 80</p>
+                <p><strong>Health Check:</strong> Every 30 seconds</p>
+                <p><strong>Metrics Format:</strong> Prometheus text-based exposition</p>
+                <p><strong>Purpose:</strong> Kubernetes monitoring homework</p>
+                <p style="margin-top: 1rem;">
+                    This custom image demonstrates how to expose application metrics 
+                    in a format that Prometheus can scrape.
+                </p>
+            </div>
+        </main>
+        
+        <footer class="footer">
+            <p>Custom Nginx Image v1.0 • Created for Kubernetes Monitoring Homework</p>
+            <p>All metrics are available at <code>/metrics</code> endpoint</p>
+        </footer>
+    </div>
+</body>
+</html>
