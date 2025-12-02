@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: nginx-service-monitor
+  namespace: monitoring
+  labels:
+    release: prometheus  # Эта метка важна!
+spec:
+  selector:
+    matchLabels:
+      app: custom-nginx  # Ищем сервисы с этой меткой
+  namespaceSelector:
+    matchNames:
+    - default  # Ищем в namespace default
+  endpoints:
+  - port: http  # Порт из service
+    interval: 15s
+    path: /metrics  # Путь к метрикам
+    scheme: http
+    honorLabels: true
